@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Noticia</title>
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- QuillJS (Editor de texto) -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Ionicons -->
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+
+  <div class="bg-white w-full max-w-4xl p-8 rounded-lg shadow-lg space-y-6">
+    <h1 class="text-3xl font-bold mb-6 text-center">Crear Nueva Noticia</h1>
+
+    <!-- Título -->
+    <div>
+      <label class="block text-gray-700 font-semibold mb-2">Título de la noticia</label>
+      <input id="titulo" type="text" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400">
+    </div>
+
+    <!-- Imagen de portada -->
+    <div>
+      <label class="block text-gray-700 font-semibold mb-2">Imagen de Portada</label>
+      <input id="imagenPortada" type="file" accept="image/*" class="w-full border border-gray-300 rounded-lg p-3">
+    </div>
+
+    <!-- Contenido de la noticia -->
+    <div>
+      <label class="block text-gray-700 font-semibold mb-2">Contenido</label>
+      <div id="editor" class="bg-white h-60 border border-gray-300 rounded-lg"></div>
+    </div>
+
+    <!-- Botón Publicar -->
+    <button id="publicar" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-lg transition duration-300">
+      Publicar Noticia
+    </button>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Inicializar Quill Editor
+    const quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'color': [] }, { 'background': [] }],
+          [{ 'align': [] }],
+          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+          ['link', 'image'],
+          ['clean']
+        ]
+      }
+    });
+
+    // Función para convertir imagen a base64
+    function convertirImagenBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('publicar').addEventListener('click', async () => {
+      const titulo = document.getElementById('titulo').value.trim();
+      const portadaInput = document.getElementById('imagenPortada');
+      const contenido = quill.root.innerHTML.trim();
+
+      if (!titulo || portadaInput.files.length === 0 || contenido === '<p><br></p>') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Por favor completa todos los campos antes de publicar.'
+        });
+        return;
+      }
+
+      try {
+        const portadaBase64 = await convertirImagenBase64(portadaInput.files[0]);
+
+        const noticia = {
+          titulo,
+          portada: portadaBase64,
+          contenido,
+          fecha: new Date().toLocaleDateString()
+        };
+
+        // Guardar en localStorage
+        const noticiasGuardadas = JSON.parse(localStorage.getItem('noticias')) || [];
+        noticiasGuardadas.push(noticia);
+        localStorage.setItem('noticias', JSON.stringify(noticiasGuardadas));
+
+        Swal.fire({
+          icon: 'success',
+          title: '¡Noticia publicada!',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          // Limpiar el formulario
+          document.getElementById('titulo').value = '';
+          quill.setContents([]);
+          document.getElementById('imagenPortada').value = '';
+        });
+
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un problema al procesar la imagen.'
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
