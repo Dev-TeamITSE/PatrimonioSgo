@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/logo" href="/img/favi_patrimonio.png" />
     <title>Patrimonio | Bellas Artes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -24,5 +25,20 @@
             <input type="text" placeholder="Buscar elemento" class="w-full outline-none">
         </div>
     </section>
+
+    <div id="contenido-area"></div>
+
+<script>
+const area = "bellas-artes";  // Cambia según la página donde se esté mostrando
+const datos = JSON.parse(localStorage.getItem(area)) || [];
+
+const contenidoDiv = document.getElementById("contenido-area");
+datos.forEach(item => {
+    const section = document.createElement("div");
+    section.innerHTML = `<h3>${item.titulo}</h3><p>${item.contenido}</p>`;
+    contenidoDiv.appendChild(section);
+});
+</script>
+
 </body>
 </html>
