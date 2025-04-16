@@ -1,44 +1,41 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NoticiasHoy</title>
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="bg-white shadow-md px-8 py-4 flex justify-between items-center">
+  <header class="bg-gray-800 shadow-md px-8 py-4 flex justify-between items-center">
     <div class="flex items-center">
-      <img src="img/logo.png" alt="Logo" class="w-full h-10 mr-2 object-contain">
-      <span class="text-xl font-bold">NoticiasHoy</span>
+      <img src="img/logo.png" alt="Logo" class="h-10 mr-2 object-contain" />
+      <span class="text-xl font-bold text-white">NoticiasHoy</span>
     </div>
-
     <div class="flex items-center space-x-6 relative">
       <div class="group relative">
-        <button class="flex items-center text-gray-700 hover:text-blue-600">
+        <button class="flex items-center text-white hover:text-blue-400">
           <ion-icon name="albums-outline" class="text-2xl mr-1"></ion-icon>
           <span>Colecciones</span>
           <ion-icon name="chevron-down-outline" class="text-xl ml-1"></ion-icon>
         </button>
-        <div class="absolute hidden group-hover:block bg-white shadow-lg mt-2 rounded-lg py-2 w-40">
-          <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100">
+        <div class="absolute hidden group-hover:block bg-gray-800 shadow-lg mt-2 rounded-lg py-2 w-40 z-20">
+          <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-gray-700">
             <ion-icon name="color-palette-outline" class="mr-2"></ion-icon> Bellas Artes
           </a>
-          <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100">
+          <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-gray-700">
             <ion-icon name="earth-outline" class="mr-2"></ion-icon> Antropología
           </a>
-          <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100">
+          <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-gray-700">
             <ion-icon name="book-outline" class="mr-2"></ion-icon> Historia
           </a>
         </div>
       </div>
-
-      <a href="nuevo.html" class="flex items-center text-gray-700 hover:text-blue-600">
+      <a href="nuevo.html" class="flex items-center text-white hover:text-blue-400">
         <ion-icon name="log-in-outline" class="text-2xl mr-1"></ion-icon>
         <span>Iniciar Sesión</span>
       </a>
@@ -46,39 +43,63 @@
   </header>
 
   <!-- Contenido -->
-  <main class="flex-1 p-8 space-y-6 flex justify-center" id="noticiasContainer">
-    <!-- Aquí se cargarán las noticias dinámicamente -->
+  <main class="flex-1 p-6 flex flex-col items-center gap-6" id="noticiasContainer">
+    <!-- Noticias dinámicas acá -->
   </main>
 
   <script>
+    function toggleMenu(btn) {
+      const menu = btn.parentElement.querySelector('.menu-opciones');
+      document.querySelectorAll('.menu-opciones').forEach(m => {
+        if (m !== menu) m.classList.add('hidden');
+      });
+      menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener("click", function(e) {
+      if (!e.target.closest(".menu-opciones") && !e.target.closest("button")) {
+        document.querySelectorAll(".menu-opciones").forEach(m => m.classList.add("hidden"));
+      }
+    });
+
     document.addEventListener("DOMContentLoaded", () => {
       const container = document.getElementById('noticiasContainer');
-      const noticias = JSON.parse(localStorage.getItem('noticias')) || [];
+      let noticias = JSON.parse(localStorage.getItem('noticias')) || [];
+
+      // Ordenar por fecha descendente (más reciente primero)
+      noticias.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
       if (noticias.length === 0) {
-        container.innerHTML = '<p class="text-center text-gray-500 text-xl">No hay noticias disponibles.</p>';
+        container.innerHTML = '<p class="text-center text-gray-400 text-xl">No hay noticias disponibles.</p>';
         return;
       }
 
-      noticias.forEach((noticia, index) => {
+      noticias.forEach(noticia => {
         const card = document.createElement('div');
-        card.className = 'bg-white rounded-lg shadow-md p-6 w-11/24 mx-4'; // 45% de la pantalla
+        card.className = 'bg-gray-800 rounded-lg shadow-md p-6 w-[50%] relative';
 
         card.innerHTML = `
-          <div class="flex flex-col space-y-4">
-            <img src="${noticia.portada}" alt="Portada" class="w-full h-60 object-cover rounded-lg">
-            <h2 class="text-2xl font-bold text-gray-800">${noticia.titulo}</h2>
-            <div class="text-gray-600 text-base line-clamp-4">
-              ${noticia.contenido}
+          <div class="absolute top-2 right-2">
+            <button onclick="toggleMenu(this)" class="text-gray-400 hover:text-blue-400">
+              <ion-icon name="ellipsis-vertical" class="text-2xl"></ion-icon>
+            </button>
+            <div class="hidden mt-2 w-32 bg-gray-700 shadow-lg rounded-md overflow-hidden z-10 menu-opciones absolute right-0">
+              <button class="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600">Editar</button>
+              <button class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-600">Eliminar</button>
             </div>
-            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg self-start">Ver Noticia</button>
           </div>
+
+          <img src="${noticia.portada}" alt="Portada" class="w-full h-56 object-cover rounded-md mb-4" />
+          <h2 class="text-2xl font-semibold text-white mb-1">${noticia.titulo}</h2>
+          <p class="text-sm text-gray-400 mb-2">
+            Publicado el ${noticia.fecha ? new Date(noticia.fecha).toLocaleDateString() : 'Fecha desconocida'}
+          </p>
+          <p class="text-gray-300 line-clamp-4">${noticia.contenido}</p>
         `;
 
         container.appendChild(card);
       });
     });
   </script>
-
 </body>
 </html>
