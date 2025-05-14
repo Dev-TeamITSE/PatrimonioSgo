@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script> <!-- Cargar SheetJS -->
 </head>
+
 <body class="min-h-screen bg-[url('./img/sectores/bellasartes.jpeg')] bg-cover bg-center">
 
     <!-- Capa oscura para que el contenido se vea mejor -->
@@ -35,33 +38,127 @@
             <div class="bg-white bg-opacity-90 rounded-xl p-6 max-w-[95%] overflow-x-auto shadow-lg w-full">
 
                 <!-- Título de la colección -->
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Nombre Colección</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <input id="coleccion-nombre" type="text" value="Nueva colección" class="text-2xl font-semibold text-gray-800 outline-none border-b border-gray-300 p-2" />
+                    
+                    <!-- Contenedor para los botones alineados a la derecha -->
+                    <div class="flex flex-col items-end gap-4">
+                        <!-- Botón para importar archivo Excel -->
+                        <button id="importar-btn" class="bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-md shadow w-full sm:w-auto">
+                            Importar archivo Excel
+                        </button>
+                        <!-- Botón para confirmar cambios (inicialmente oculto) -->
+                        <button id="confirmar-cambios" class="bg-green-400 hover:bg-green-500 text-white px-4 py-2 rounded-md shadow w-full sm:w-auto hidden">
+                            Confirmar cambios
+                        </button>
+                        <!-- Input de archivo Excel (oculto) -->
+                        <input type="file" id="excel-file" style="display: none;" />
+                    </div>
+                </div>
 
-                <table class="min-w-full text-sm text-left">
-                    <thead class="bg-red-400 text-white">
-                        <tr>
-                            <th class="px-4 py-2">#</th>
-                            <th class="px-4 py-2">Característica 1</th>
-                            <th class="px-4 py-2">Característica 2</th>
-                            <th class="px-4 py-2">Característica 3</th>
-                            <th class="px-4 py-2">Característica 4</th>
-                            <th class="px-4 py-2">Característica 5</th>
-                            <th class="px-4 py-2">Característica 6</th>
-                            <th class="px-4 py-2">Característica 7</th>
-                            <th class="px-4 py-2">Característica 8</th>
-                            <th class="px-4 py-2">Característica 9</th>
-                            <th class="px-4 py-2">Característica 10</th>
-                        </tr>
+                <table id="tabla-historia" class="min-w-full text-sm text-left mt-6">
+                    <thead class="bg-gray-100 text-gray-800" id="table-header">
+                        <!-- Los encabezados se agregarán dinámicamente aquí -->
                     </thead>
-                    <tbody class="text-gray-800">
-                        <!-- 10 filas de ejemplo -->
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">1</td><td class="px-4 py-2">A1</td><td class="px-4 py-2">B1</td><td class="px-4 py-2">C1</td><td class="px-4 py-2">D1</td><td class="px-4 py-2">E1</td><td class="px-4 py-2">F1</td><td class="px-4 py-2">G1</td><td class="px-4 py-2">H1</td><td class="px-4 py-2">I1</td><td class="px-4 py-2">J1</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">2</td><td class="px-4 py-2">A2</td><td class="px-4 py-2">B2</td><td class="px-4 py-2">C2</td><td class="px-4 py-2">D2</td><td class="px-4 py-2">E2</td><td class="px-4 py-2">F2</td><td class="px-4 py-2">G2</td><td class="px-4 py-2">H2</td><td class="px-4 py-2">I2</td><td class="px-4 py-2">J2</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">3</td><td class="px-4 py-2">A3</td><td class="px-4 py-2">B3</td><td class="px-4 py-2">C3</td><td class="px-4 py-2">D3</td><td class="px-4 py-2">E3</td><td class="px-4 py-2">F3</td><td class="px-4 py-2">G3</td><td class="px-4 py-2">H3</td><td class="px-4 py-2">I3</td><td class="px-4 py-2">J3</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">4</td><td class="px-4 py-2">A4</td><td class="px-4 py-2">B4</td><td class="px-4 py-2">C4</td><td class="px-4 py-2">D4</td><td class="px-4 py-2">E4</td><td class="px-4 py-2">F4</td><td class="px-4 py-2">G4</td><td class="px-4 py-2">H4</td><td class="px-4 py-2">I4</td><td class="px-4 py-2">J4</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">5</td><td class="px-4 py-2">A5</td><td class="px-4 py-2">B5</td><td class="px-4 py-2">C5</td><td class="px-4 py-2">D5</td><td class="px-4 py-2">E5</td><td class="px-4 py-2">F5</td><td class="px-4 py-2">G5</td><td class="px-4 py-2">H5</td><td class="px-4 py-2">I5</td><td class="px-4 py-2">J5</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">6</td><td class="px-4 py-2">A6</td><td class="px-4 py-2">B6</td><td class="px-4 py-2">C6</td><td class="px-4 py-2">D6</td><td class="px-4 py-2">E6</td><td class="px-4 py-2">F6</td><td class="px-4 py-2">G6</td><td class="px-4 py-2">H6</td><td class="px-4 py-2">I6</td><td class="px-4 py-2">J6</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">7</td><td class="px-4 py-2">A7</td><td class="px-4 py-2">B7</td><td class="px-4 py-2">C7</td><td class="px-4 py-2">D7</td><td class="px-4 py-2">E7</td><td class="px-4 py-2">F7</td><td class="px-4 py-2">G7</td><td class="px-4 py-2">H7</td><td class="px-4 py-2">I7</td><td class="px-4 py-2">J7</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">8</td><td class="px-4 py-2">A8</td><td class="px-4 py-2">B8</td><td class="px-4 py-2">C8</td><td class="px-4 py-2">D8</td><td class="px-4 py-2">E8</td><td class="px-4 py-2">F8</td><td class="px-4 py-2">G8</td><td class="px-4 py-2">H8</td><td class="px-4 py-2">I8</td><td class="px-4 py-2">J8</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">9</td><td class="px-4 py-2">A9</td><td class="px-4 py-2">B9</td><td class="px-4 py-2">C9</td><td class="px-4 py-2">D9</td><td class="px-4 py-2">E9</td><td class="px-4 py-2">F9</td><td class="px-4 py-2">G9</td><td class="px-4 py-2">H9</td><td class="px-4 py-2">I9</td><td class="px-4 py-2">J9</td></tr>
-                        <tr class="border-t border-gray-300"><td class="px-4 py-2">10</td><td class="px-4 py-2">A10</td><td class="px-4 py-2">B10</td><td class="px-4 py-2">C10</td><td class="px-4 py-2">D10</td><td class="px-4 py-2">
+                    <tbody id="table-body" class="text-gray-800">
+                        <!-- Las filas se agregarán dinámicamente aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Mostrar el input de archivo cuando se haga clic en el botón
+        document.getElementById("importar-btn").addEventListener("click", function() {
+            document.getElementById("excel-file").click();
+        });
+
+        // Función para manejar la carga del archivo
+        document.getElementById("excel-file").addEventListener("change", handleFile, false);
+
+        function handleFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: 'binary' });
+
+                // Asumir que estamos trabajando con la primera hoja
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+                // Convertir los datos de la hoja a JSON
+                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                // Obtener el cuerpo y encabezado de la tabla
+                const tableBody = document.getElementById("table-body");
+                const tableHeader = document.getElementById("table-header");
+
+                // Limpiar los datos previos
+                tableBody.innerHTML = "";
+                tableHeader.innerHTML = "";
+
+                // Cambiar el nombre de la colección según el nombre del archivo
+                const filename = file.name.split('.')[0];  // Obtener el nombre sin extensión
+                document.getElementById("coleccion-nombre").value = filename;
+
+                // Crear el encabezado dinámicamente basado en las columnas del Excel
+                const headerRow = document.createElement("tr");
+                rows[0].forEach((header, index) => {
+                    const th = document.createElement("th");
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.value = header || `Característica ${index + 1}`;
+                    input.classList.add("w-full", "p-2", "border", "rounded-md", "bg-gray-200", "text-gray-800");
+                    th.appendChild(input);
+                    th.classList.add("px-4", "py-2", "border", "bg-white", "border-gray-300");
+                    headerRow.appendChild(th);
+                });
+                tableHeader.appendChild(headerRow);
+
+                // Mostrar los datos en la tabla
+                rows.slice(1).forEach((row, rowIndex) => {
+                    const tr = document.createElement("tr");
+                    row.forEach((cell, cellIndex) => {
+                        const td = document.createElement("td");
+                        td.textContent = cell || "";
+                        td.classList.add("px-4", "py-2", "border");
+
+                        // Habilitar edición de celda con doble clic
+                        td.addEventListener("dblclick", function() {
+                            const input = document.createElement("input");
+                            input.type = "text";
+                            input.value = td.textContent;
+                            input.classList.add("w-full", "p-2", "border", "rounded-md", "bg-gray-200");
+
+                            input.addEventListener("blur", function() {
+                                td.textContent = input.value;
+                            });
+
+                            td.textContent = "";
+                            td.appendChild(input);
+                            input.focus();
+                        });
+
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+
+                // Mostrar el botón "Confirmar cambios"
+                document.getElementById("confirmar-cambios").classList.remove("hidden");
+            };
+            reader.readAsBinaryString(file);
+        }
+
+        // Evento para el botón "Confirmar cambios"
+        document.getElementById("confirmar-cambios").addEventListener("click", function() {
+            // Aquí se puede agregar la lógica para guardar los cambios en la base de datos
+            alert("Cambios confirmados. Ahora puedes guardarlos en la base de datos.");
+        });
+    </script>
+</body>
+
+</html>
